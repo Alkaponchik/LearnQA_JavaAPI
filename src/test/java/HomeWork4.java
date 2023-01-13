@@ -10,5 +10,6 @@ public class HomeWork4 {
                .get("https://playground.learnqa.ru/api/get_text")
                .andReturn();
        response.prettyPrint();
+
     }
 }
