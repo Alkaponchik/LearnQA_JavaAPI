@@ -1,10 +1,11 @@
 import io.restassured.RestAssured;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 
 public class HomeWork7 {
     @Test
-    public void testRedirect2 (){
+    public void main (){
         Response response = RestAssured
                 .given()
                 .redirects()
@@ -12,31 +13,31 @@ public class HomeWork7 {
                 .when()
                 .get("https://playground.learnqa.ru/api/long_redirect")
                 .andReturn();
+        response.prettyPrint();
 
-        String locationHeaders = response.getHeader("Location");
-        System.out.println("Доступен переход на "+locationHeaders);
+        String locationHeader = response.getHeader("Location");
         int statusCode = response.getStatusCode();
-        System.out.println("Status code "+statusCode);
+        String location = null;
 
         while (statusCode != 200) {
-            Response response1 = RestAssured
+            Response response200 = RestAssured
                     .given()
                     .redirects()
                     .follow(false)
                     .when()
-                    .get(locationHeaders)
+                    .get(locationHeader)
                     .andReturn();
-
-            if (locationHeaders == null) {
-                System.out.println("Status code "+statusCode);
-
+            locationHeader = response200.getHeader("Location");
+            if (locationHeader != null)
+                location = locationHeader;
+            statusCode = response200.getStatusCode();
+            if (locationHeader == null) {
+                System.out.println("Location "+location);
+                System.out.println("Status code: "+statusCode);
+                break;
             } else {
-                locationHeaders = response1.getHeader("Location");
-                statusCode = response1.getStatusCode();
-                System.out.println("Доступен переход на "+locationHeaders);}
-            System.out.println("Status code "+statusCode);
+                System.out.println("Перенаправление на "+locationHeader);}
+            System.out.println("Status code: "+statusCode);
         }
-
     }
-
 }
